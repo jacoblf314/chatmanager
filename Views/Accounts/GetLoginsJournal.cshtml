@@ -1,0 +1,51 @@
+﻿@model IEnumerable<ChatManager.Models.LoginEntry>
+
+@{
+    DateTime currentDate = DateTime.MinValue;
+}
+
+@{
+    var reversedEntries = Model.Reverse();
+}
+
+@foreach (var entry in reversedEntries)
+{
+    if (entry.LoginTime.Date != currentDate.Date)
+    {
+        if (currentDate != DateTime.MinValue)
+        {
+            <hr />
+        }
+        <div class="userContainer">
+            <h3>@entry.LoginTime.ToShortDateString()</h3>
+            <div id="delete_@currentDate" class="DELETE_LOGINENTRIES icon fa fa-close" title="Effacer les logins du @currentDate.ToShortDateString()"></div>
+        </div>
+        currentDate = entry.LoginTime.Date;
+        <hr />
+    }
+    <div class="userContainer">
+        <div class="userDetails">
+            <img src="@entry.UserAvatar" alt="@entry.UserName" class="UserSmallAvatar" />
+            <span>@entry.UserName</span>
+        </div>
+        <div>
+            <span>@entry.LoginTime.ToString("HH:mm")</span>
+        </div>
+        <span></span>
+        <div>
+            @if (entry.LogoutTime != null)
+            {
+                <span>@entry.LogoutTime.Value.ToString("HH:mm")</span>
+            }
+            else if (entry.IsOnline)
+            {
+                @Helper.OnLineStatusIcon(true, false)
+            }
+            else if (entry.Expired)
+            {
+                <img src="~/Content/UI-Icons/timeout.png" class="small_icon" />
+            }
+        </div>
+    </div>
+}
+
